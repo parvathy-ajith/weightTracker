@@ -1,0 +1,172 @@
+<% title='Dashboard' %>
+
+    <div class="container-fluid pt-4 px-4 mt-5">
+        <div class="row justify-content-center ">
+            <div class="col-sm-12 col-xl-8">
+                <div class="bg-secondary-subtle rounded h-100  p-4">
+                    <div class="ms-3 my-5">
+                        <h3 class="mb-2">Today's Weight in kg</h3>
+                        <form action="/logWeight" method="post" class="row">
+                            <div class="col-lg-10">
+                                <label for="weightToday" class="visually-hidden">Today's Weight in kg</label>
+                                <input type="number" step="0.1" class="form-control" name="weight" id="weightToday"
+                                    placeholder="enter weight in kg">
+                            </div>
+                            <div class="col-auto">
+                                <button type="submit" id="addWeight" class="btn btn-primary rounded-circle mb-3" <% if
+                                    (weightEntrycount>0) { %>
+                                    disabled
+                                    <% } %>
+                                        >+
+                                </button>
+                            </div>
+                        </form>
+                        <div class="alert alert-warning" role="alert" id="entryAlert" style="display: none;">
+                            Already logged today's weight! No more entries today!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center ">
+            <div class="col-sm-12 col-xl-8 mt-4">
+                <div class="row">
+                    <div class="col mb-2">
+                        <form id="compareForm" class="d-flex">
+                            <input list="startDates" class="form-control me-2" type="text" id="start_date"
+                                name="start_date" required placeholder="start date">
+                            <datalist id="startDates">
+                                <% for( let i=0; i < foundUser.weightEntries.length; i++ ) { %>
+                                    <option value="<%=foundUser.weightEntries[i].created_at.toDateString() %>">
+                                        <%=foundUser.weightEntries[i].weight %> kg
+                                    </option>
+                                    <% } %>
+                            </datalist>
+                            <input list="endDates" class="form-control me-2" type="text" id="end_date" name="end_date"
+                                required placeholder="end date">
+                            <datalist id="endDates">
+                                <% for( let i=0; i < foundUser.weightEntries.length; i++ ) { %>
+                                    <option value="<%=foundUser.weightEntries[i].created_at.toDateString() %>">
+                                        <%=foundUser.weightEntries[i].weight %> kg
+                                    </option>
+                                    <% } %>
+                            </datalist>
+                            <button class="btn btn-outline-success" type="button"
+                                onclick="compareWeight()">Compare</button>
+                            <button class="btn btn-outline-secondary" type="button"
+                                onclick="clearDates()">Clear</button>
+                        </form>
+                        <div class="alert alert-info mt-3" role="alert" id="compareResult" style="display: none;">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col mt-3">
+                        <table id="weightListTable" class="table table-striped table-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <th scope="col">#</th>
+                                    <th scope="col">Weight</th>
+                                    <th scope="col">Date of Entry</th>
+                                    <th scope="col">Edit/Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for( let index=0; index < foundUser.weightEntries.length; index++ ) { %>
+                                    <tr>
+                                        <th scope="row">
+                                            <%= index + 1 %>
+                                        </th>
+                                        <td>
+                                            <%=foundUser.weightEntries[index].weight %> kg
+                                        </td>
+                                        <td>
+                                            <%=foundUser.weightEntries[index].created_at.toDateString() %>
+                                        </td>
+                                        <td id="actionIcons" class="text-center">
+                                            <a href="#" class="btn text-dark"
+                                                onclick="return editableRow(`<%=index%>`);">
+                                                <i class="fa fa-edit" style="font-size:24px"></i>
+                                            </a>
+                                            <a href="/weight/delete?index=<%=index%>" onclick="return confirm_alert();"
+                                                class="btn text-dark">
+                                                <i class="fa fa-trash-o" style="font-size:24px"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.2/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="/javascripts/paging.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#weightListTable').paging({ limit: 3 });
+        });
+        if (document.getElementById('addWeight').disabled == true) {
+            document.getElementById('entryAlert').style.display = "block";
+        }
+        function confirm_alert() {
+            return confirm("Are you sure you want to DELETE this entry?");
+        }
+        var prevHTML;
+        function editableRow(index) {
+            var table = document.getElementById("weightListTable");
+            var row = table.getElementsByTagName("tr")[parseInt(index) + 1];
+            var cols = row.cells;
+            var weightEditable = parseFloat(cols[1].innerText);
+            prevHTML = cols[3].innerHTML;
+            cols[1].innerHTML = `<form action="/weight/edit?index=${index}" id="editForm" method="post">
+                                <input class="form-control me-2" type="number" step="0.1" id="editedWeight" name="editedWeight" value="${weightEditable}"></form>`
+            cols[3].innerHTML = `<button class="btn btn-outline-warning text-dark" type="button" onclick="update(${index})">Update</button>
+                               <button class="btn btn-outline-secondary text-dark" type="button" onclick="cancelEdit(${index})">Cancel</button>`
+            return false;
+        }
+        function cancelEdit(index) {
+            var table = document.getElementById("weightListTable");
+            var row = table.getElementsByTagName("tr")[parseInt(index) + 1];
+            var cols = row.cells;
+            console.log(cols);
+            var weight = cols[1].childNodes[0].childNodes[1].value;
+            cols[1].innerHTML = weight;
+            cols[3].innerHTML = prevHTML;
+        }
+        function update(index) {
+            document.getElementById("editForm").submit();
+        }
+        function compareWeight() {
+            var start = document.getElementById("start_date").value;
+            var end = document.getElementById("end_date").value;
+
+            axios.post(`/compareweight`, { startDate: start, endDate: end }).then(response => {
+                var alert = document.getElementById("compareResult");
+                alert.innerText = response.data.message;
+                alert.style.display = "block";
+            }).catch(error => {
+                console.error(error.response.data);
+            });
+        }
+        function clearDates() {
+            var form = document.getElementById("compareForm");
+            form.reset();
+            document.getElementById("compareResult").style.display = "none";
+        }
+        function formatDate(date) {
+            const yyyy = date.getFullYear();
+            let mm = date.getMonth() + 1; // Months start at 0!
+            let dd = date.getDate();
+
+            if (dd < 10) dd = '0' + dd;
+            if (mm < 10) mm = '0' + mm;
+
+            const formattedToday = dd + '/' + mm + '/' + yyyy;
+            return formattedToday;
+        }
+    </script>

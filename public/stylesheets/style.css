@@ -1,0 +1,56 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+body {
+  min-height: 100vh;
+  /* background: url("https://digitshack.com/codepen/bmical/bg.png ");
+  background-size: cover;
+  background-repeat: no-repeat; */
+  font-family: "Nunito", sans-serif;
+}
+.navbar-brand{
+  font-family: "Caveat Brush", cursive;
+  font-weight: 700;
+  font-size: 3rem;
+}
+.banner{
+  font-size: 3rem;
+  letter-spacing: 8px;
+  word-spacing: 30px;
+}
+#BMICalculator .BMIinput input{
+  outline: none;
+  border: none;
+  width: 60%;
+  text-align: center;
+  font-size: 28px;
+  font-family: "Nunito", sans-serif;
+} 
+#comment {
+  color: #4f7df9;
+  font-weight: 800;
+}
+#login-btn:focus,#signUp-btn:focus{
+  background-color: coral;
+}
+.paging-nav {
+  text-align: right;
+  padding-top: 2px;
+}
+
+.paging-nav a {
+  margin: auto 1px;
+  text-decoration: none;
+  display: inline-block;
+  padding: 1px 7px;
+  background: #91b9e6;
+  color: white;
+  border-radius: 3px;
+}
+
+.paging-nav .selected-page {
+  background: #187ed5;
+  font-weight: bold;
+}

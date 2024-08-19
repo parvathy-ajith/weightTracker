@@ -1,0 +1,35 @@
+<nav class="navbar navbar-expand-lg bg-body-tertiary bg-opacity-50 py-0 shadow ">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">Weight Tracker</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      </ul>
+      <% if (username) { %>
+        <div class="d-flex gap-2 mb-sm-3 mb-lg-0">
+          <div class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                <img class="rounded-circle me-lg-2" src="/images/profile_pic.jpg" alt="user profile picture" style="width: 40px; height: 40px;">
+                <span class="d-none d-lg-inline-flex"><%= username %></span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-end bg-light border-0 rounded-0 rounded-bottom m-0">
+                <a href="/dashboard" class="dropdown-item">Dashboard</a>
+                <a href="/logout" class="dropdown-item">Log Out</a>
+            </div>
+        </div>
+          
+        </div>
+        <% } else { %>
+          <div class="d-flex gap-2 mb-sm-3 mb-lg-0">
+            <button class="btn btn-light rounded-pill" type="button" id="login-btn"
+              onclick="showLoginForm()">LOGIN</button>
+            <button class="btn  btn-info rounded-pill" type="button" id="signUp-btn"
+              onclick="showSignUpForm()">SIGNUP</button>
+          </div>
+          <% } %>
+    </div>
+  </div>
+</nav>

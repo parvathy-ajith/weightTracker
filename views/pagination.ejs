@@ -1,0 +1,61 @@
+<% title='Dashboard' %>
+
+<div class="container-fluid pt-4 px-4 mt-5">
+    <div class="row justify-content-center">
+        <div class="col-sm-12 col-xl-8 mt-4">
+            <table id="weightListTable" class="table table-striped table-bordered">
+                <thead>
+                    <tr class="text-center">
+                        <th scope="col">#</th>
+                        <th scope="col">Weight</th>
+                        <th scope="col">Date of Entry</th>
+                        <th scope="col">Date of Updation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% var index= 1%>
+                    <% foundUser.forEach(weightEntries => { %>
+                        <tr>
+                            <th scope="row">
+                                <%= index++ %>
+                            </th>
+                            <td>
+                                <%=weightEntries.weight %> kg
+                            </td>
+                            <td class="text-center">
+                                <%=weightEntries.created_at.toDateString() %>
+                            </td>
+                            <td class="text-center">
+                                <%=weightEntries.updated_at.toDateString() %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <nav aria-label="Page navigation example" style="margin:auto;">
+
+
+            <% if (pagination.hasPrevPage) { %>
+              <a href="?page=1">&laquo; first</a>
+              <a href="?page=<%= pagination.prevPage %>">&laquo; previous</a>
+            <% } %>
+         
+            <% for (let page_number = 1; page_number <= pagination.totalPages; page_number++) { %>
+              <% if (pagination.page === page_number) { %>
+                <span ><%= page_number %></span>
+              <% } else { %>
+                <a href="?page=<%= page_number %>"><%= page_number %></a>
+              <% } %>
+            <% } %>
+         
+            <% if (pagination.hasNextPage) { %>
+              <a href="?page=<%= pagination.nextPage %>" >next &raquo;</a>
+              <a href="?page=<%= pagination.totalPages %>">last &raquo;</a>
+            <% } %>
+         
+          </nav>
+    </div>
+</div>
